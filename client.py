@@ -1,5 +1,6 @@
 import socket
 import threading
+import tqdm
 
 host = 'localhost'
 
@@ -23,7 +24,7 @@ s, addr = lsock.accept()
 print(f"Connected to client on {addr}")
 
 s.send(bytes("Hello from client",'utf-8'))
+
 s.close()
 
-input("press enter to continue...")
 

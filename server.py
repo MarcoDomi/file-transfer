@@ -18,12 +18,11 @@ lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 lsock.bind((host, port))
 lsock.listen(2)
 
-s, addr = lsock.accept()
+s, addr = lsock.accept() #this will block the program while waiting for connection
 print(f"Connected to client on {addr}")
 
 threading.Thread(target=receive_data, daemon=True).start()
 
 s.send(bytes("Welcome to server",'utf-8'))
-s.close()
 
-input("press enter to continue...")
+s.close()
