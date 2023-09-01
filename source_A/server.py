@@ -24,7 +24,6 @@ lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 lsock.bind((host, port))
 lsock.listen(2)
 
-
 s, addr = lsock.accept() #this will block the program while waiting for connection
 print(f"Connected to client on {addr}")
 threading.Thread(target=receive_data, daemon=True).start()
@@ -34,7 +33,14 @@ while True:
     file = open(file_name,"rb")
     file_size = os.path.getsize(file_name)
 
-    s.send(bytes("Welcome to server",'utf-8'))
+    s.send(bytes("file.txt","utf-8"))
+    s.send(bytes(str(file_size), "utf-8"))
+
+    data = file.read()
+    s.sendall(data)
+    s.send(b"<END>")
+    file.close()
+
     next = input("Send another file?[y/n]")
     if next == 'n':
         s.close()
