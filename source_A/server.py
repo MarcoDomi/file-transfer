@@ -33,12 +33,11 @@ while True:
     file = open(file_name,"rb")
     file_size = os.path.getsize(file_name)
 
-    s.send(bytes("file.txt","utf-8"))
-    s.send(bytes(str(file_size), "utf-8"))
 
     data = file.read()
-    s.sendall(data)
-    s.send(b"<END>")
+    full_msg = f"{file_name} {file_size} {data}"
+    s.sendall(full_msg.encode('utf-8'))
+   
     file.close()
 
     next = input("Send another file?[y/n]")

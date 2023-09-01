@@ -9,13 +9,21 @@ def receive_data():
    
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.connect((host, port))
+   
+   
     while True:
-        msg = lsock.recv(1024).decode('utf-8')
-        if msg != "":
-            print(msg)
-        else:
-            lsock.close()
+        msg_list = lsock.recv(1024).decode('utf-8')
+        msg_list = msg_list.split(" ")
+        print(msg_list) #TODO find way to split msg into list w/o splitting the file
+        if msg_list == "<END>" or msg_list == "":
             break
+        else:
+            pass
+            #msg_list += [msg_list]
+    
+       
+    lsock.close()
+    print(msg_list)
 
 threading.Thread(target=receive_data, daemon=True).start()
 
