@@ -27,22 +27,27 @@ lsock.listen(2)
 s, addr = lsock.accept() #this will block the program while waiting for connection
 print(f"Connected to client on {addr}")
 threading.Thread(target=receive_data, daemon=True).start()
-
+#TODO create a list of file names to send
 while True:
     file_name = "sendme.txt"
     file = open(file_name,"rb")
     file_size = os.path.getsize(file_name)
 
+    s.send(bytes(file_name, 'utf-8'))
+    s.send(bytes(str(file_size),'utf-8'))
 
     data = file.read()
-    full_msg = f"{file_name} {file_size} {data}"
-    s.sendall(full_msg.encode('utf-8'))
+    data += b"<END>"
+    print(data)
+    s.sendall(data)
    
     file.close()
 
+    input("press enter to continue")
+    '''
     next = input("Send another file?[y/n]")
     if next == 'n':
         s.close()
         break
-
+        '''
 

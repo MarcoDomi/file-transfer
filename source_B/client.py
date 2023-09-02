@@ -12,18 +12,32 @@ def receive_data():
    
    
     while True:
-        msg_list = lsock.recv(1024).decode('utf-8')
-        msg_list = msg_list.split(" ")
-        print(msg_list) #TODO find way to split msg into list w/o splitting the file
-        if msg_list == "<END>" or msg_list == "":
-            break
-        else:
-            pass
-            #msg_list += [msg_list]
-    
-       
+        file_name = lsock.recv(1024).decode('utf-8')
+        file_size = lsock.recv(1024).decode('utf-8')
+        #recv_file = lsock.recv(1024).decode('utf-8')
+        print(file_name)
+        print(file_size)
+        file = open(file_name, "wb")
+        prog_bar = tqdm.tqdm(unit='B', unit_scale=True, unit_divisor=1000,
+                        total=int(file_size))
+        file_bytes = b""
+        done = False
+        while not done:
+            data = lsock.recv(1024)
+           
+            if file_bytes[-5:] == b"<END>" or data[-5:] == b"<END>":
+                done = True
+            #else:
+            file_bytes += data
+            prog_bar.update(1024)
+
+        print('check1')
+        print(file_bytes)
+        file.write(file_bytes)
+        file.close()
+        break
     lsock.close()
-    print(msg_list)
+    
 
 threading.Thread(target=receive_data, daemon=True).start()
 
