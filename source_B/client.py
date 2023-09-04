@@ -48,19 +48,19 @@ lsock.listen(2)
 s, addr = lsock.accept()
 print(f"Connected to client on {addr}")
 
-while True:
-    file_name = "fish.jpg"
-    file = open(file_name,"rb")
-    file_size = os.path.getsize(file_name)
 
-    s.send(bytes(file_name,'utf-8'))
-    s.send(bytes(str(file_size),'utf-8'))
+file_name = "fish.jpg"
+file = open(file_name,"rb")
+file_size = os.path.getsize(file_name)
 
-    data = file.read()
-    data += b"<END>"
-    s.sendall(data)
+s.send(bytes(file_name,'utf-8'))
+s.send(bytes(str(file_size),'utf-8'))
 
-    file.close()
+data = file.read()
+data += b"<END>"
+s.sendall(data)
 
-    input("press enter to continue")
+file.close()
+
+input("press enter to continue")
     
