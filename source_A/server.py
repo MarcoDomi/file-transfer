@@ -10,13 +10,32 @@ def receive_data():
 
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.connect((host, port))
+
     while True:
-        msg = lsock.recv(1024).decode('utf-8')
-        if msg != "":
-            print(msg)
-        else:
-            lsock.close()
-            break
+        file_name = lsock.recv(1024).decode('utf-8')
+        file_size = lsock.recv(1024).decode('utf-8')
+
+        print(file_name)
+        print(file_size)
+        file = open(file_name, "wb")
+        prog_bar = tqdm.tqdm(unit='B', unit_scale=True, unit_divisor=1000,
+                            total=int(file_size))
+        file_bytes = b""
+        done = False
+        while not done:
+            data = lsock.recv(1024)
+
+            if file_bytes[-5:] == b"<END>" or data[-5:] == b"<END>":
+                     done = True
+
+            file_bytes += data
+            prog_bar.update(1024)
+            
+        file.write(file_bytes[:-5])
+        file.close()
+        break
+    lsock.close()
+        
 
 port = 9090
 
@@ -38,16 +57,9 @@ while True:
 
     data = file.read()
     data += b"<END>"
-    print(data)
     s.sendall(data)
    
     file.close()
 
     input("press enter to continue")
-    '''
-    next = input("Send another file?[y/n]")
-    if next == 'n':
-        s.close()
-        break
-        '''
 

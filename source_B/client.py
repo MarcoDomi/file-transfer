@@ -1,6 +1,7 @@
 import socket
 import threading
 import tqdm
+import os
 
 host = 'localhost'
 
@@ -9,7 +10,6 @@ def receive_data():
    
     lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     lsock.connect((host, port))
-   
    
     while True:
         file_name = lsock.recv(1024).decode('utf-8')
@@ -30,10 +30,8 @@ def receive_data():
             #else:
             file_bytes += data
             prog_bar.update(1024)
-
-        print('check1')
-        print(file_bytes)
-        file.write(file_bytes)
+        
+        file.write(file_bytes[:-5])
         file.close()
         break
     lsock.close()
@@ -51,12 +49,18 @@ s, addr = lsock.accept()
 print(f"Connected to client on {addr}")
 
 while True:
-    s.send(bytes("Hello from client",'utf-8'))
-    next = input("Send another file?[y/n]")
-    if next == 'n':
-        s.close()
-        break
+    file_name = "fish.jpg"
+    file = open(file_name,"rb")
+    file_size = os.path.getsize(file_name)
 
+    s.send(bytes(file_name,'utf-8'))
+    s.send(bytes(str(file_size),'utf-8'))
 
+    data = file.read()
+    data += b"<END>"
+    s.sendall(data)
 
+    file.close()
 
+    input("press enter to continue")
+    
